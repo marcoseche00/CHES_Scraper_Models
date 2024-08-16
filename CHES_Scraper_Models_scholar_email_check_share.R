@@ -42,6 +42,8 @@ rs_driver_object <- rsDriver(browser = "chrome",
 #create a client object
 remDr <- rs_driver_object$client
 
+#if unable to set up, check out this useful tutorial: https://www.youtube.com/watch?v=GnpJujF9dBw
+
 #Step 2: create functions ----------------------------------------------------------------------------------------------------------------
 
 #delay
