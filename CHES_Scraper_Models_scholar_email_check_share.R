@@ -28,9 +28,22 @@ wdman::selenium(retcommand = TRUE)
 
 #Step 1: set up Chrome search -------------------------------------------------------------------------------------------------------------
 
+#download Java Script + set up
+#if unable to set up, check out this useful tutorial: https://www.youtube.com/watch?v=GnpJujF9dBw
+#https://www.youtube.com/watch?v=BnY4PZyL9cg
+
+#check Chrome version
+chromeCommand <- chrome(retcommand = T, verbose = F, check = F) #it's outdated
+#enable hidden items in Mac: https://www.wikihow.com/Show-Hidden-Files-and-Folders-on-a-Mac 
+#Shift + Command + . should work
+
+binman::list_versions("chromedriver")
+
+#if it doesn't run when updating chromedriver, make sure to only leave chromedriver file in chromedriver folder
+
 #set incognito window
 rs_driver_object <- rsDriver(browser = "chrome",
-                             chromever = "126.0.6478.62",
+                             chromever = "128.0.6613.138",
                              verbose = FALSE,
                              port = free_port(),
                              extraCapabilities = list(
@@ -41,8 +54,6 @@ rs_driver_object <- rsDriver(browser = "chrome",
 
 #create a client object
 remDr <- rs_driver_object$client
-
-#if unable to set up, check out this useful tutorial: https://www.youtube.com/watch?v=GnpJujF9dBw
 
 #Step 2: create functions ----------------------------------------------------------------------------------------------------------------
 
