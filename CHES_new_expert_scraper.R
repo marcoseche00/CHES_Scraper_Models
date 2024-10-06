@@ -15,6 +15,7 @@ library(jsonlite)
 library(dplyr)
 library(tidyr)
 library(readxl)
+library(stringi) # To remove accents
 
 # Scraper ----------------------------------------------------------------------
 
@@ -99,7 +100,7 @@ url <- "https://scholar.google.com/scholar?as_ylo=2020" # Here we are interested
 
 new_experts <- scrape_gs(
   term = 'intext: ("European party" OR "European parties")',  # Adjust search term accordingly; the example here is party/parties Europe/European
-  pages = 1:30,                               # Specify pages to scrape (here 30 pages); should be more than enough
+  pages = 1:20,                               # Specify pages to scrape (here 20 pages); should be more than enough
   crawl_delay = 1.2,                          # Delay between requests to avoid being blocked
   useragent_string                            # Pass the useragent string
 ) 
@@ -110,26 +111,27 @@ new_experts <- scrape_gs(
 
 # Create a data set with all authors (Initial + Surname) present + delete repeated authors -----
 
-# Delete repeated outcomes
-
 new_experts <- new_experts %>% 
-  distinct(authors, .keep_all = TRUE) %>%  # Select columns + unique values
+  distinct(authors, .keep_all = TRUE) %>%  # Select columns + unique values (deleting repeated authors)
   separate_rows(authors, sep = ", ") %>% # Separate authors with commas
-  separate(authors, into = c("Initial", "Last Name"), sep = " ", extra = "merge") # Separate initials from last_names and get rid of spaces between the two
+  separate(authors, into = c("Initial", "Last Name"), sep = " ", extra = "merge") %>% # Separate initials from last_names and get rid of spaces between the two
+  mutate(`Last Name` = stri_trans_general(`Last Name`, "Latin-ASCII")) %>% # Remove accents
+  arrange(`Last Name`) # Order alphabetically
 
 # Load existing expert list
 
-belgium <- "path/to/your/file.xlsx"
-belgium <- read_excel(belgium, sheet = 1)
+existing_experts <- "path/to/your/file.xlsx"
+existing_experts <- read_excel(belgium, sheet = 1)
 
-belgium <- belgium %>%
+existing_experts <- existing_experts %>%
   select(`First Name`, `Last Name`) %>% # Select variables of interest
+  mutate(`Last Name` = stri_trans_general(`Last Name`, "Latin-ASCII")) %>% 
   mutate(Initial = substr(`First Name`, 1, 1)) # Create an initial column for comparison
 
 # Compare and delete
 
 new_experts <- new_experts %>%
-  anti_join(belgium, by = c("Last Name" = "Last Name", "Initial" = "Initial"))
+  anti_join(existing_experts, by = c("Last Name" = "Last Name", "Initial" = "Initial"))
 
 # To generate new expert lists: ------------------------------------------------
 
