@@ -27,7 +27,7 @@ library(R.utils)
 binman::rm_platform("phantomjs")
 wdman::selenium(retcommand = TRUE)
 
-#Step 1: set up Chrome search --------------------------------------------------
+# Step 1: set up Chrome search -------------------------------------------------
 
 # Download Java Script + set up
 # If unable to set up, check out this useful tutorial: https://www.youtube.com/watch?v=GnpJujF9dBw
@@ -59,7 +59,7 @@ rs_driver_object <- rsDriver(browser = "chrome",
 
 remDr <- rs_driver_object$client
 
-#Step 2: create functions ------------------------------------------------------
+# Step 2: create functions -----------------------------------------------------
 
 # Delay
 
@@ -309,11 +309,11 @@ chrome_search <- function(row, remDr) {
   return(list(new_email = NA, email_webpage = NA))
 }
 
-#Step 3: set up data -----------------------------------------------------------
+# Step 3: set up data ----------------------------------------------------------
 
-#load data ------------
+# Load data
 
-#your data
+  # Your data
 
 # Add variables
 
@@ -338,7 +338,7 @@ dat <- dat %>%
   mutate(`First Name` = stri_trans_general(`First Name`, "Latin-ASCII")) %>% 
   mutate(`Last Name` = stri_trans_general(`Last Name`, "Latin-ASCII"))
 
-#Step 4: perform search --------------------------------------------------------
+# Step 4: perform search -------------------------------------------------------
 
 # First search (Google Scholar + linked website)
 
@@ -381,12 +381,12 @@ for (i in 1:nrow(dat)) {
   }
 } 
 
-#Step 5: save data -------------------------------------------------------------
+# Step 5: save data ------------------------------------------------------------
 
 folder_path <- "path"
 write.xlsx(dat, file = file.path(folder_path, "name_of_file.xlsx"))
 
-#Step 6: cleanup ---------------------------------------------------------------
+# Step 6: cleanup --------------------------------------------------------------
 
 remDr$close()
 rs_driver_object$server$stop()
