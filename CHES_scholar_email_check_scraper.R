@@ -335,8 +335,8 @@ dat <- dat[first_occurrence | !dup_names, ]
 # Remove accents
 
 dat <- dat %>% 
-  mutate(`Last Name` = gsub("[^a-zA-Z]", "", `Last Name`)) %>% 
-  mutate(`First Name` = gsub("[^a-zA-Z]", "", `First Name`))
+  mutate(`First Name` = stri_trans_general(`First Name`, "Latin-ASCII")) %>% 
+  mutate(`Last Name` = stri_trans_general(`Last Name`, "Latin-ASCII"))
 
 #Step 4: perform search --------------------------------------------------------
 
