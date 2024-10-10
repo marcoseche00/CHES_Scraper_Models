@@ -70,13 +70,13 @@ get_results <- function(url, params) {
 
 # Get data -----
 
-results_df <- get_results(url, params)
+results_df <- get_results(url, params) # With this function, we can just change the query keywords and re-run this line
 
 # Data cleaning ----------------------------------------------------------------
 
 # Create a data set with all authors (Initial + Surname) present + delete repeated authors -----
 
-new_experts <- results %>% 
+new_experts <- results_df %>% 
   mutate(authors = gsub(" -.*", "", summary)) %>% # Get authors out of summary
   separate_rows(authors, sep = ", ") %>% # Separate authors with commas
   distinct(authors, .keep_all = TRUE) %>%  # Select columns + unique values (deleting repeated authors)
