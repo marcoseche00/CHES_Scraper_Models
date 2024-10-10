@@ -21,8 +21,6 @@ library(stringi) # To remove accents
 
 # Define your API key -----
 
-api_key <- "e2bb353ca6560d781153b700b60b77fdc5a736eaebc19f25e1787df9034d9b84"
-
 api_key <- "YOUR_SERPAPI_KEY"  # Replace with your actual API key
 
 # Define search parameters -----
