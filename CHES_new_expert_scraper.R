@@ -23,50 +23,54 @@ library(stringi) # To remove accents
 
 api_key <- "YOUR_SERPAPI_KEY"  # Replace with your actual API key
 
-# Define search parameters -----
+# Search queary, url, and params -----
 
 search_query <- 'European parties' # Example search; any results containing the keywords of interest
-
-# Make API request -----
 
 url <- "https://serpapi.com/search"
 
 params <- list(
-    api_key = api_key,
-    engine = "google_scholar",
-    q = search_query,
-    as_ylo = 2020,  # Start year
-    as_yhi = 2024,  # End year
-    start = 0,  # For pagination: 0 for first page, 10 for second, etc.
-    num = 20  # Number of results to fetch per page (max 20)
+  api_key = api_key,
+  engine = "google_scholar",
+  q = search_query,
+  as_ylo = 2020,  # Start year
+  as_yhi = 2024,  # End year
+  start = 0,  # For pagination: 0 for first page, 10 for second, etc.
+  num = 20  # Number of results to fetch per page (max 20)
 )
 
-# Unfortunately, this call only collects 20 results at a time.
-# To check more results, start the call at later starts
+# Make API request -----
+
+get_results <- function(url, params) {
+  # Send GET request
+  response <- GET(url, query = params)
   
-response <- GET(url, query = params)
+  # Parse the response
+  results <- fromJSON(content(response, as = "text"), flatten = TRUE)
+  
+  # Extract the specified components
+  titles <- results[["organic_results"]][["title"]]
+  links <- results[["organic_results"]][["link"]]
+  snippets <- results[["organic_results"]][["snippet"]]
+  summary <- results[["organic_results"]][["publication_info.summary"]]
+  n_citations <- results[["organic_results"]][["inline_links.cited_by.total"]]
+  
+  # Combine all extracted data into a data frame
+  results_df <- data.frame(
+    title = titles,
+    link = links,
+    snippet = snippets,
+    summary = summary,
+    n_citations = n_citations,
+    stringsAsFactors = FALSE
+  )
+  
+  return(results_df)
+}
 
-# Parse response -----
+# Get data -----
 
-results <- fromJSON(content(response, as = "text"), flatten = TRUE)
-
-# Extract the specified components from all_papers
-
-titles <- results[["organic_results"]][["title"]]
-links <- results[["organic_results"]][["link"]]
-snippets <- results[["organic_results"]][["snippet"]]
-summary <- results[["organic_results"]][["publication_info.summary"]]
-n_citations <- results[["organic_results"]][["inline_links.cited_by.total"]]
-
-# Combine all extracted data into a data frame
-
-results <- data.frame(
-  title = titles,
-  link = links,
-  snippet = snippets,
-  summary = summary,
-  n_citations = n_citations
-)
+results_df <- get_results(url, params)
 
 # Data cleaning ----------------------------------------------------------------
 
